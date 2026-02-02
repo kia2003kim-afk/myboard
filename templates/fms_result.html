@@ -1,0 +1,156 @@
+{% extends 'base.html' %} 
+
+{% block title %}FMS 통합 데이터 리포트{% endblock %} 
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --secondary-color: #64748b;
+        --success-color: #059669;
+        --fail-color: #dc2626;
+        --bg-color: #f8fafc;
+    }
+
+    .fms-wrapper {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: var(--bg-color);
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+
+    .report-header {
+        max-width: 1200px;
+        margin: 0 auto 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 3px solid var(--primary-color);
+        padding-bottom: 15px;
+    }
+
+    .report-header h2 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .report-date {
+        color: var(--secondary-color);
+        font-size: 14px;
+    }
+
+    .table-card {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .fms-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .fms-table thead {
+        background-color: #f1f5f9;
+    }
+
+    .fms-table th {
+        padding: 18px 15px;
+        color: #475569;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .fms-table td {
+        padding: 15px;
+        vertical-align: middle;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 14px;
+    }
+
+    .fms-table tbody tr:hover {
+        background-color: #f0f7ff;
+        transition: all 0.2s;
+    }
+
+    /* 부적합 여부 배지 스타일 */
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-pass { background: #dcfce7; color: var(--success-color); }
+    .status-fail { background: #fee2e2; color: var(--fail-color); }
+
+    /* 육계번호 강조 */
+    .chick-no {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 80px 0;
+        color: var(--secondary-color);
+    }
+</style>
+
+<div class="fms-wrapper">
+    <div class="report-header">
+        <div>
+            <h2>📊 FMS 통합 결과 리포트</h2>
+        </div>
+        <div class="report-date">검사일자: 2025-01-10</div>
+    </div>
+
+    <div class="table-card">
+        {% if results and results|length > 0 %}
+        <table class="fms-table">
+            <thead>
+                <tr>
+                    {% for column in results[0].keys() %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    {% for key, value in row.items() %}
+                    <td>
+                        {% if key == '부적합여부' %}
+                            <span class="status-badge {% if value == '적합' %}status-pass{% else %}status-fail{% endif %}">
+                                {{ value }}
+                            </span>
+                        {% elif key == '육계번호' %}
+                            <span class="chick-no">{{ value }}</span>
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-data">
+            <h3>조회된 데이터가 없습니다.</h3>
+            <p>쿼리 조건이나 데이터베이스 연결 상태를 확인해 주세요.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
