@@ -29,7 +29,7 @@ def get_db_connection():
 
 
 
-@app.route('/fms/result')
+@app.route('/')
 
 def index():
     # 1. 데이터 베이스에 접속
